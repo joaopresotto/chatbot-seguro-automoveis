@@ -205,8 +205,11 @@ class ChatbotTester:
 
     def executar_testes(self, chatbot, num_conversas=3):
             """Same as original but stores metrics in a more structured way"""
+            print('Total de conversas que vão ser geradas:', num_conversas)
             for i in range(num_conversas):
-                conversa = self.gerar_conversa(chatbot, np.random.randint(1, 10))
+                n_interacoes = np.random.randint(1, 10)   
+                print(f'\tGerando conversa de número {i+1} com {n_interacoes} interações)...')
+                conversa = self.gerar_conversa(chatbot, n_interacoes)
                 self.resultados_teste['conversas'].append({
                     'id_conversa': str(uuid.uuid4()),
                     'id_sessao': self.session_id,
@@ -228,7 +231,7 @@ class ChatbotTester:
 
     def salvar_relatorio(self):
         # Save JSON data for potential future use
-        filepath = f'resultados_teste_{self.session_id}.json'
+        filepath = f"resultados_teste_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         with open(filepath, 'w', encoding='utf-8') as f:
             print(f'Salvando resultados do teste em {filepath}')
             json.dump(self.resultados_teste, f, ensure_ascii=False, indent=2)
