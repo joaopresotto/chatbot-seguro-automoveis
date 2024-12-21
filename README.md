@@ -33,6 +33,6 @@ Para instalar e executar o projeto localmente, siga os passos abaixo:
 Para iniciar o chatbot, execute o comando:
 
 ## Estrutura do Projeto
-- `src/chromadataset.py`: Contém a classe `ChromaDataset` responsável por gerenciar o banco de dados vetorial e processar PDFs.
-- `src/chatbotseguros.py`: Contém a classe `ChatbotSeguros` que implementa a lógica do chatbot.
-- `chatbottest.py`: Script para testar o chatbot e gerar relatórios de desempenho.
+- `src/chroma_dataset.py`: Contém a classe `ChromaDataset` responsável por gerenciar o banco de dados vetorial e processar PDFs.
+- `src/chatbot_seguros.py`: Contém a classe `ChatbotSeguros` que implementa a lógica do chatbot.
+- `chatbot_test.py`: Script para testar o chatbot e gerar relatórios de desempenho.

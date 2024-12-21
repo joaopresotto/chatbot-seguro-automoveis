@@ -2,7 +2,7 @@ import os
 import re
 import json
 import ollama
-from src.chromadataset import ChromaDataset
+from src.chroma_dataset import ChromaDataset
 
 class ChatbotSeguros:
     def __init__(self, database_path=os.path.join('data','chroma_database'), 

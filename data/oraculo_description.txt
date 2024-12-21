@@ -13,7 +13,7 @@ Para cada avaliação, siga este formato JSON exato:
   "texto_estruturado": true/false,
   "texto_no_mesmo_idioma": true/false,
   "texto_no_escopo": true/false,
-  "score": (número inteiro de 0 a 100 representando o quão alinhado a resposta está com os critérios),
+  "score": (número inteiro de 0 a 100 representando o quão alinhado a resposta está com os critérios apresentados anteriormente),
   "feedback": "Texto explicativo em português detalhando os pontos fortes e fracos da resposta do chatbot."
 }
 
