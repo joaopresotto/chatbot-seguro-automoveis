@@ -25,10 +25,10 @@ class ChatbotSeguros:
         # Instanciar dataset
         self.dataset_class = ChromaDataset(database_path=database_path, pdfs_path=pdfs_path)
 
-    def classificar_duvida(self, query):
+    def classificar_tema(self, query):
         """
-        Classifica o tipo de dúvida com base em padrões predefinidos.
-        Retorna o tipo da dúvida e um score de confiança.
+        Classifica o tipo de tema com base em padrões predefinidos.
+        Retorna o tipo da tema e um score de confiança.
         """
         question_patterns = {
             'coberturas_protecoes': [
@@ -68,26 +68,9 @@ class ChatbotSeguros:
                 if re.search(pattern, query_lower):
                     # Calcular score baseado na quantidade de matches
                     matches = len(re.findall(pattern, query_lower))
-                    confidence = min(matches * 0.3, 1.0)  # Score máximo de 1.0
-                    return duvida_type, confidence
+                    # confidence = min(matches * 0.3, 1.0)  # Score máximo de 1.0
+                    return duvida_type
         
-        return 'outras_duvidas', 0.1
-        
-    def classificar_tema(self, query):
-        """Classifica a pergunta em um tema específico"""
-        temas = {
-            'coberturas_protecoes': ['cobertura', 'cobre', 'protege', 'proteção', 'carro reserva', 'terceiro', 'roubo', 'acessórios', 'oficina', 'riscar', 'enchentes', 'alagamentos', 'objetos pessoais', 'panes mecânicas', 'panes elétricas', 'bater sozinho', 'cobertura contra terceiros', 'alcoolizado', 'árvore', 'buraco'],
-            'servicos_beneficios': ['serviço de chaveiro', 'reboque', 'bateria', 'gasolina', 'quilômetros de guincho', 'rastreador', 'condutor', 'assistência', 'carro reserva', 'parcelar a franquia'],
-            'pagamentos_valores': ['valor', 'preço', 'custo', 'pagamento', 'parcela', 'endereço', 'transferir seguro', 'Tabela FIPE', 'upgrade no carro', 'desconto', 'bom condutor', 'assistência', 'nome sujo'],
-            'processos_procedimentos': ['vistoria', 'vistoria prévia', 'atrasar pagamento', 'perito', 'reboque', 'carretinha', 'comunicar sinistro', 'acionar cobertura', 'sinistro'],
-            'casos_especificos': ['aplicativo', 'outros países', 'para-brisa', 'modificar carro', 'manifestação', 'emprestar carro', 'viagem', 'tumultos', 'calamidade pública', 'documento irregular', 'IPVA atrasado'],
-            'contratacao_renovacao': ['nova vistoria', 'bônus', 'carro financiado', 'idade máxima', 'documentos', 'perfil de condutor', 'mais de um carro', 'qualquer carro', 'escolher coberturas', 'transferir bônus']
-        }
-        
-        query_lower = query.lower()
-        for tema, palavras_chave in temas.items():
-            if any(palavra in query_lower for palavra in palavras_chave):
-                return tema
         return 'outros'
 
     def avaliar_resposta(self, query, resposta, contexto):
@@ -99,11 +82,14 @@ class ChatbotSeguros:
             eval_prompt = f"""
             Avalie a qualidade da resposta fornecida pelo chatbot com base nos seguintes critérios:
 
-            1. **Texto alinhado ao tema**: A resposta fornecida está alinhada ao tema ou pergunta feita? Verifique se o chatbot se mantém dentro do escopo esperado (seguros de automóveis das seguradoras Santander, Bradesco, Porto Seguro e Suhai) ou se diverge para outros tópicos.
-            2. **Texto preciso**: A resposta contém informações corretas, claras e relevantes? Evite considerar como precisas respostas que contenham informações erradas, confusas ou ambíguas.
-            3. **Texto estruturado**: A resposta está bem estruturada e compreensível? Avalie se a linguagem é direta e acessível, sem ambiguidades ou termos desnecessariamente técnicos.
-            4. **Texto no mesmo idioma**: O chatbot precisa responder as dúvidas sempre em português brasileiro, se a resposta estiver em outro idioma (inglês por exemplo), isso é um erro.
-            5. **Texto no escopo**: Verifique se o chatbot evita responder perguntas fora de sua especialidade. Por exemplo, ele não deve tentar responder sobre seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
+            1. **Texto alinhado ao tema**: A resposta está diretamente relacionada à pergunta ou tema abordado? Verifique se o chatbot mantém o foco nas questões sobre *seguros de automóveis* das seguradoras Santander, Bradesco, Porto Seguro e Suhai, evitando desviar para outros tópicos.
+            2. **Texto preciso**: A resposta é correta, clara e relevante? Identifique se há erros factuais, informações confusas ou ambiguidades que possam comprometer a utilidade da resposta.
+            3. **Texto estruturado**: A resposta está bem organizada e fácil de entender? Avalie se a linguagem é clara e objetiva, sem termos excessivamente técnicos ou redundantes.
+            4. **Texto no mesmo idioma**: O chatbot deve sempre responder em português brasileiro (pt-br). Qualquer resposta total ou parcial em outro idioma (como inglês ou espanhol) será considerada um erro. Para este critério, avalie com atenção:
+            - Se há uso integral de outro idioma.
+            - Se há misturas entre português e outro idioma (mesmo em partes pequenas).
+            - Se a linguagem utilizada segue os padrões de português brasileiro, considerando possíveis regionalismos ou influências externas.
+            5. **Texto no escopo**: O chatbot não deve fornecer respostas fora de sua área de especialidade. Avalie se ele evita responder perguntas relacionadas a seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
 
             Pergunta: {query}
             Resposta: {resposta}
@@ -160,12 +146,11 @@ class ChatbotSeguros:
         """
         Gera uma resposta para a query do usuário, registrando todo o processo.
         """
-        # Classificar tipo de dúvida e registrar no dataset
-        tipo_duvida, conf_duvida = self.classificar_duvida(query)
-        self.dataset_class.registrar_duvida(query, tipo_duvida, conf_duvida, session_id)
-        
-        # Avaliar tema da pergunta
+        # avaliar tema da pergunta
         tema = self.classificar_tema(query)
+        
+        # registrar pergunta
+        self.dataset_class.registrar_duvida(query, tema, session_id)
         
         # Buscar contexto relevante
         contexto_pdfs = self.dataset_class.busca_contextual(query)

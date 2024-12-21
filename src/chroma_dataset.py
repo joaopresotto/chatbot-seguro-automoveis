@@ -26,7 +26,7 @@ class ChromaDataset:
             print("Processando PDFs...")
             self.save_documents(self.docs_collection, self.process_pdfs(pdfs_path))
             
-    def registrar_duvida(self, query, duvida_type, confidence, session_id) :
+    def registrar_duvida(self, query, tema, session_id) :
         """
         Registra a dúvida do usuário para análise posterior.
         """
@@ -43,8 +43,7 @@ class ChromaDataset:
             metadatas=[{
                 'session_id': session_id,
                 'timestamp': timestamp,
-                'duvida_type': duvida_type,
-                'confidence': confidence
+                'tema': tema,
             }],
             ids=[f"question_{timestamp}_{session_id}"]
         )
@@ -116,6 +115,7 @@ class ChromaDataset:
         Timestamp: {timestamp}
         Pergunta: {query}
         Resposta: {resposta}
+        Tema da pergunta: {tema}
         """
         
         # Gerar embedding
@@ -159,7 +159,7 @@ class ChromaDataset:
             scores.append(metadata['avaliacao_score'])
             temas[metadata['tema']] += 1 # acrescentar tema
             # Registrar problemas se score baixo
-            if metadata['avaliacao_score'] < 70:
+            if metadata['avaliacao_score'] <= 70:
                 problemas.append({
                     'pergunta': metadata['query'],
                     'resposta': metadata['resposta'],
@@ -202,15 +202,15 @@ class ChromaDataset:
         duvidas_comuns = defaultdict(int)
         
         for metadata in all_questions['metadatas']:
-            duvidas_por_tipo[metadata['duvida_type']] += 1
+            duvidas_por_tipo[metadata['tema']] += 1
         
         # Encontrar dúvidas similares
-        for i, doc in enumerate(all_questions['documents']):
+        for _, doc in enumerate(all_questions['documents']):
             duvidas_comuns[doc] += 1
         
         return {
             'total_duvidas': total_duvidas,
-            'distribuicao_tipos': dict(duvidas_por_tipo),
+            'distribuicao_temas': dict(duvidas_por_tipo),
             'duvidas_frequentes': sorted(
                 duvidas_comuns.items(), 
                 key=lambda x: x[1], 

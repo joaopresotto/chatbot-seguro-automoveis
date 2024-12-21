@@ -12,6 +12,10 @@ class ChatbotTester:
         
         # perguntas base por categoria que servirão de exemplo para o Ollama
         self.perguntas_base = {
+            'outros': [
+                'Oi, qual sua principal função?',
+            ],
+            
             'coberturas_protecoes': [
                 "O seguro para o carro dá direito a carro reserva?",
                 "Qual a extensão territorial do seguro para o carro?",
@@ -248,5 +252,5 @@ if __name__ == "__main__":
     chatbot = ChatbotSeguros()
     tester = ChatbotTester()
     
-    resultados = tester.executar_testes(chatbot, num_conversas=25)
+    resultados = tester.executar_testes(chatbot, num_conversas=30)
     tester.salvar_relatorio()
