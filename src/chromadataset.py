@@ -135,9 +135,11 @@ class ChromaDataset:
                 'query': query,
                 'tema': tema,
                 'avaliacao_score': avaliacao['score'],
-                'relevante': avaliacao['relevante'],
-                'preciso': avaliacao['preciso'],
-                'claro': avaliacao['claro'],
+                "texto_no_tema": avaliacao['texto_no_tema'],
+                "texto_preciso": avaliacao['texto_preciso'],
+                "texto_estruturado": avaliacao['texto_estruturado'],
+                "texto_no_mesmo_idioma": avaliacao['texto_no_mesmo_idioma'],
+                "texto_no_escopo": True,
                 'feedback': avaliacao['feedback']
             }],
             ids=[f"chat_{timestamp}_{session_id}"]
