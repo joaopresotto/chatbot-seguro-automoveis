@@ -166,7 +166,7 @@ class ChromaDataset:
                     'timestamp': metadata['timestamp'],
                     'oraculo': {
                         'tema': metadata['tema'],
-                        'avaliacao_score': metadata['score'],
+                        'avaliacao_score': metadata['avaliacao_score'],
                         "texto_no_tema": metadata['texto_no_tema'],
                         "texto_preciso": metadata['texto_preciso'],
                         "texto_estruturado": metadata['texto_estruturado'],
