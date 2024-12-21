@@ -4,7 +4,7 @@ import uuid
 import ollama
 import numpy as np
 from datetime import datetime
-from src.chatbotseguros import ChatbotSeguros
+from src.chatbot_seguros import ChatbotSeguros
 
 class ChatbotTester:
     def __init__(self):
