@@ -2,6 +2,7 @@ import random
 import json
 import uuid
 import ollama
+import numpy as np
 from datetime import datetime
 from src.chatbotseguros import ChatbotSeguros
 
@@ -102,36 +103,42 @@ class ChatbotTester:
             }
         }
 
-    def gerar_variacao_pergunta(self, categoria, pergunta_base):
-        """Usa o Ollama para gerar uma variação da pergunta base"""
-        prompt = f"""
-        Você é um cliente interessado em seguro de carro. 
-        Reescreva a seguinte pergunta de uma maneira diferente, mantendo o mesmo significado 
-        mas usando outras palavras, como se fosse uma pessoa real perguntando naturalmente:
+    def gerar_variacao_pergunta(self, pergunta_base):
+        """
+        Gera variação da pergunta com 60% de chance, caso contrário usa a pergunta original.
+        """
+        # 60% de chance de variar a pergunta
+        if random.random() < 0.6:
+            prompt = f"""
+            Você é um cliente interessado em seguro de carro. 
+            Reescreva a seguinte pergunta de uma maneira diferente, mantendo o mesmo significado 
+            mas usando outras palavras, como se fosse uma pessoa real perguntando naturalmente:
 
-        Pergunta original: {pergunta_base}
+            Pergunta original: {pergunta_base}
 
-        Lembre-se:
-        - Mantenha informal e natural
-        - Pode adicionar contexto pessoal
-        - Mantenha o foco na mesma dúvida
-        - Use linguagem do dia a dia
-        - Responda APENAS a nova pergunta, sem explicações
+            Lembre-se:
+            - Mantenha informal e natural
+            - Pode adicionar contexto pessoal
+            - Mantenha o foco na mesma dúvida
+            - Use linguagem do dia a dia
+            - Responda APENAS a nova pergunta, sem explicações
 
-        Nova pergunta:"""
+            Nova pergunta:"""
 
-        try:
-            resposta = ollama.chat(
-                model=self.model_name,
-                messages=[{'role': 'user', 'content': prompt}]
-            )
-            nova_pergunta = resposta['message']['content'].strip()
-            # Remove aspas se houver
-            nova_pergunta = nova_pergunta.strip('"\'')
-            return nova_pergunta
-        except Exception as e:
-            print(f"Erro ao gerar variação da pergunta: {e}")
-            return pergunta_base
+            try:
+                resposta = ollama.chat(
+                    model=self.model_name,
+                    messages=[{'role': 'user', 'content': prompt}]
+                )
+                nova_pergunta = resposta['message']['content'].strip()
+                # Remove aspas se houver
+                nova_pergunta = nova_pergunta.strip('"\'')
+                return nova_pergunta
+            except Exception as e:
+                print(f"Erro ao gerar variação da pergunta: {e}")
+                return pergunta_base
+        
+        return pergunta_base
 
     def gerar_pergunta_followup(self, categoria, contexto_anterior):
         """Gera uma pergunta de follow-up baseada no contexto"""
@@ -168,7 +175,7 @@ class ChatbotTester:
             if i == 0:
                 # Primeira pergunta: variação de uma pergunta base
                 pergunta_base = random.choice(self.perguntas_base[categoria])
-                pergunta = self.gerar_variacao_pergunta(categoria, pergunta_base)
+                pergunta = self.gerar_variacao_pergunta(pergunta_base)
             else:
                 # 70% de chance de fazer pergunta de follow up
                 if random.random() < 0.7 and historico:
@@ -180,12 +187,13 @@ class ChatbotTester:
                     # Nova categoria e nova variação de pergunta
                     nova_categoria = random.choice(list(self.perguntas_base.keys()))
                     pergunta_base = random.choice(self.perguntas_base[nova_categoria])
-                    pergunta = self.gerar_variacao_pergunta(nova_categoria, pergunta_base)
+                    pergunta = self.gerar_variacao_pergunta(pergunta_base)
             
             resposta = chatbot.gerar_resposta(pergunta, self.session_id)
             
             print(f"Usuário: {pergunta}")
             print(f"Chatbot: {resposta}")
+            print('----')   
             
             historico.append({
                 'timestamp': datetime.now().isoformat(),
@@ -196,63 +204,38 @@ class ChatbotTester:
         return historico
 
     def executar_testes(self, chatbot, num_conversas=3):
-        for i in range(num_conversas):
-            conversa = self.gerar_conversa(chatbot)
-            self.resultados_teste['conversas'].append({
-                'id_conversa': str(uuid.uuid4()),
-                'id_sessao': self.session_id,
-                'interacoes': conversa
-            })
+            """Same as original but stores metrics in a more structured way"""
+            for i in range(num_conversas):
+                conversa = self.gerar_conversa(chatbot, np.random.randint(1, 10))
+                self.resultados_teste['conversas'].append({
+                    'id_conversa': str(uuid.uuid4()),
+                    'id_sessao': self.session_id,
+                    'interacoes': conversa
+                })
+                
+                self.session_id = str(uuid.uuid4())
             
-            self.session_id = str(uuid.uuid4())
-        
-        self.resultados_teste['metricas']['duvidas'] = chatbot.dataset_class.get_metricas_duvidas()
-        self.resultados_teste['metricas']['assertividade'] = chatbot.dataset_class.get_metricas_assertividade()
-        
-        return self.resultados_teste
-
-    def gerar_relatorio(self):
-        if not self.resultados_teste['conversas']:
-            return "Nenhum teste foi executado ainda"
+            # Get metrics and format them for better visualization
+            metricas_duvidas = chatbot.dataset_class.get_metricas_duvidas()
+            metricas_assertividade = chatbot.dataset_class.get_metricas_assertividade()
             
-        total_conversas = len(self.resultados_teste['conversas'])
-        total_interacoes = sum(len(c['interacoes']) for c in self.resultados_teste['conversas'])
-        
-        relatorio = [
-            "\n=== Relatório de Testes do Chatbot ===\n",
-            f"Total de conversas: {total_conversas}",
-            f"Total de interações: {total_interacoes}",
-            f"Média de interações por conversa: {total_interacoes/total_conversas:.1f}",
-            "\nExemplo de conversa gerada:",
-            "\nPrimeira conversa:",
-        ]
+            self.resultados_teste['metricas'] = {
+                'duvidas': metricas_duvidas,
+                'assertividade': metricas_assertividade
+            }
+            
+            return self.resultados_teste
 
-        # Adiciona exemplo da primeira conversa
-        if self.resultados_teste['conversas']:
-            primeira_conversa = self.resultados_teste['conversas'][0]['interacoes']
-            for i, interacao in enumerate(primeira_conversa, 1):
-                relatorio.extend([
-                    f"\nInteração {i}:",
-                    f"Usuário: {interacao['pergunta']}",
-                    f"Chatbot: {interacao['resposta'][:150]}..." # Mostra só início da resposta
-                ])
-
-        relatorio.extend([
-            "------------------------------------",
-            "\nMétricas de dúvidas:",
-            str(self.resultados_teste['metricas']['duvidas']),
-            "\nMétricas de assertividade:",
-            str(self.resultados_teste['metricas']['assertividade'])
-        ])
-        
-        return "\n".join(relatorio)
+    def salvar_relatorio(self):
+        # Save JSON data for potential future use
+        filepath = f'resultados_teste_{self.session_id}.json'
+        with open(filepath, 'w', encoding='utf-8') as f:
+            print(f'Salvando resultados do teste em {filepath}')
+            json.dump(self.resultados_teste, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     chatbot = ChatbotSeguros()
     tester = ChatbotTester()
     
-    resultados = tester.executar_testes(chatbot, num_conversas=1)
-    
-    # salvar resultado do teste
-    with open('resultados_teste.txt', 'w', encoding='utf-8') as f:
-        f.write(tester.gerar_relatorio())
+    resultados = tester.executar_testes(chatbot, num_conversas=25)
+    tester.salvar_relatorio()

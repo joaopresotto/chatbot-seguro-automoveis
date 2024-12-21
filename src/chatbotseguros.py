@@ -102,7 +102,7 @@ class ChatbotSeguros:
             1. **Texto alinhado ao tema**: A resposta fornecida está alinhada ao tema ou pergunta feita? Verifique se o chatbot se mantém dentro do escopo esperado (seguros de automóveis das seguradoras Santander, Bradesco, Porto Seguro e Suhai) ou se diverge para outros tópicos.
             2. **Texto preciso**: A resposta contém informações corretas, claras e relevantes? Evite considerar como precisas respostas que contenham informações erradas, confusas ou ambíguas.
             3. **Texto estruturado**: A resposta está bem estruturada e compreensível? Avalie se a linguagem é direta e acessível, sem ambiguidades ou termos desnecessariamente técnicos.
-            4. **Texto no mesmo idioma**: O chatbot mantém o mesmo idioma durante toda a interação? Ele apresenta mudanças inesperadas de contexto ou de linguagem (como mudar para outro idioma sem necessidade)?
+            4. **Texto no mesmo idioma**: O chatbot precisa responder as dúvidas sempre em português brasileiro, se a resposta estiver em outro idioma (inglês por exemplo), isso é um erro.
             5. **Texto no escopo**: Verifique se o chatbot evita responder perguntas fora de sua especialidade. Por exemplo, ele não deve tentar responder sobre seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
 
             Pergunta: {query}
@@ -176,21 +176,22 @@ class ChatbotSeguros:
         # Incluir histórico recente da sessão
         historico_recente = self.dataset_class.get_recent_history(session_id)
         
-        # Preparar prompt com todos os contextos
         prompt = f"""
-        Você é um assistente especializado em seguros das seguradoras Santander, Bradesco, Porto Seguro e Suhai.
+        Você é um assistente especializado em seguros das seguradoras Santander, Bradesco, Porto Seguro e Suhai. Sua função é responder às perguntas dos usuários com base em informações fornecidas, mantendo precisão, profissionalismo e um tom acolhedor. 
 
-        Histórico recente da conversa:
+        As informações a seguir são organizadas para ajudar na formulação de sua resposta:
+        1. **Histórico recente da conversa**:
         {historico_recente}
 
-        Contexto dos documentos relevantes:
+        2. **Contexto dos documentos relevantes**:
         {contexto_pdfs}
 
-        Perguntas semelhantes respondidas anteriormente:
+        3. **Perguntas semelhantes respondidas anteriormente**:
         {conversas_similares}
 
-        Com base nas informações fornecidas, responda à seguinte pergunta de forma precisa, profissional e acolhedora, seguindo as diretrizes estabelecidas.
-        Pergunta: {query}
+        Responda à seguinte pergunta com base nas informações fornecidas, seguindo as diretrizes estabelecidas. Não inicie sua resposta com "Pergunta:" ou "Resposta:".  
+
+        **Pergunta**: {query}
         """
         
         # Gerar resposta
@@ -203,6 +204,12 @@ class ChatbotSeguros:
         )
         
         resposta_content = resposta['message']['content']
+        
+        # Fix pois por conta do historico de conversas, a resposta pode começar com "Pergunta:" ou "Resposta:" por ser um modelo mais "simples"
+        if resposta_content.strip().startswith("Pergunta:"):
+            resposta_content = resposta_content.split("Pergunta:")[1].strip()
+        elif resposta_content.strip().startswith("Resposta:"):
+            resposta_content = resposta_content.split("Resposta:")[1].strip()
         
         # Avaliar resposta
         avaliacao = self.avaliar_resposta(query, resposta_content, contexto_pdfs)

@@ -116,9 +116,6 @@ class ChromaDataset:
         Timestamp: {timestamp}
         Pergunta: {query}
         Resposta: {resposta}
-        Tema: {tema}
-        Avaliação Score: {avaliacao['score']}
-        Feedback: {avaliacao['feedback']}
         """
         
         # Gerar embedding
@@ -133,13 +130,14 @@ class ChromaDataset:
                 'session_id': session_id,
                 'timestamp': timestamp,
                 'query': query,
+                'resposta': resposta,
                 'tema': tema,
                 'avaliacao_score': avaliacao['score'],
                 "texto_no_tema": avaliacao['texto_no_tema'],
                 "texto_preciso": avaliacao['texto_preciso'],
                 "texto_estruturado": avaliacao['texto_estruturado'],
                 "texto_no_mesmo_idioma": avaliacao['texto_no_mesmo_idioma'],
-                "texto_no_escopo": True,
+                "texto_no_escopo": avaliacao['texto_no_escopo'],
                 'feedback': avaliacao['feedback']
             }],
             ids=[f"chat_{timestamp}_{session_id}"]
@@ -163,9 +161,19 @@ class ChromaDataset:
             # Registrar problemas se score baixo
             if metadata['avaliacao_score'] < 70:
                 problemas.append({
-                    'query': metadata['query'],
-                    'score': metadata['avaliacao_score'],
-                    'timestamp': metadata['timestamp']
+                    'pergunta': metadata['query'],
+                    'resposta': metadata['resposta'],
+                    'timestamp': metadata['timestamp'],
+                    'oraculo': {
+                        'tema': metadata['tema'],
+                        'avaliacao_score': metadata['score'],
+                        "texto_no_tema": metadata['texto_no_tema'],
+                        "texto_preciso": metadata['texto_preciso'],
+                        "texto_estruturado": metadata['texto_estruturado'],
+                        "texto_no_mesmo_idioma": metadata['texto_no_mesmo_idioma'],
+                        "texto_no_escopo": metadata['texto_no_escopo'],
+                        'feedback': metadata['feedback']
+                    }
                 })
         
         return {
