@@ -102,11 +102,19 @@ class ChatbotTester:
                 'assertividade': None
             }
         }
+        
+        self.controle_aleatoriedade = 0
 
     def gerar_variacao_pergunta(self, pergunta_base):
         """
         Gera variação da pergunta com 60% de chance, caso contrário usa a pergunta original.
         """
+
+        # PAra garantir que não vai ter muita aleatoriedade no começo, pois o "usuario" pode alucinar um pouco
+        if self.controle_aleatoriedade < 5:
+            self.controle_aleatoriedade += 1
+            return pergunta_base
+        
         # 60% de chance de variar a pergunta
         if random.random() < 0.6:
             prompt = f"""
@@ -156,7 +164,7 @@ class ChatbotTester:
         - Responda APENAS a pergunta, sem explicações
 
         Pergunta de follow-up:"""
-
+    
         try:
             resposta = ollama.chat(
                 model=self.model_name,
