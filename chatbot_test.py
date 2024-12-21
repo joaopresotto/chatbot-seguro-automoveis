@@ -11,11 +11,7 @@ class ChatbotTester:
         self.model_name = 'mistral:latest'
         
         # perguntas base por categoria que servirão de exemplo para o Ollama
-        self.perguntas_base = {
-            'outros': [
-                'Oi, qual sua principal função?',
-            ],
-            
+        self.perguntas_base = {            
             'coberturas_protecoes': [
                 "O seguro para o carro dá direito a carro reserva?",
                 "Qual a extensão territorial do seguro para o carro?",
@@ -203,8 +199,8 @@ class ChatbotTester:
             
             resposta = chatbot.gerar_resposta(pergunta, self.session_id)
             
-            print(f"Usuário: {pergunta}")
-            print(f"Chatbot: {resposta}")
+            print(f"\tUsuário: {pergunta}")
+            print(f"\tChatbot: {resposta}")
             print('----')   
             
             historico.append({

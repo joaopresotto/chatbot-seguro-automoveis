@@ -84,12 +84,11 @@ class ChatbotSeguros:
 
             1. **Texto alinhado ao tema**: A resposta está diretamente relacionada à pergunta ou tema abordado? Verifique se o chatbot mantém o foco nas questões sobre *seguros de automóveis* das seguradoras Santander, Bradesco, Porto Seguro e Suhai, evitando desviar para outros tópicos.
             2. **Texto preciso**: A resposta é correta, clara e relevante? Identifique se há erros factuais, informações confusas ou ambiguidades que possam comprometer a utilidade da resposta.
-            3. **Texto estruturado**: A resposta está bem organizada e fácil de entender? Avalie se a linguagem é clara e objetiva, sem termos excessivamente técnicos ou redundantes.
-            4. **Texto no mesmo idioma**: O chatbot deve sempre responder em português brasileiro (pt-br). Qualquer resposta total ou parcial em outro idioma (como inglês ou espanhol) será considerada um erro. Para este critério, avalie com atenção:
+            3. **Texto no mesmo idioma**: O chatbot deve sempre responder em português brasileiro (pt-br). Qualquer resposta total ou parcial em outro idioma (como inglês ou espanhol) será considerada um erro. Para este critério, avalie com atenção:
             - Se há uso integral de outro idioma.
             - Se há misturas entre português e outro idioma (mesmo em partes pequenas).
             - Se a linguagem utilizada segue os padrões de português brasileiro, considerando possíveis regionalismos ou influências externas.
-            5. **Texto no escopo**: O chatbot não deve fornecer respostas fora de sua área de especialidade. Avalie se ele evita responder perguntas relacionadas a seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
+            4. **Texto no escopo**: O chatbot não deve fornecer respostas fora de sua área de especialidade. Avalie se ele evita responder perguntas relacionadas a seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
 
             Pergunta: {query}
             Resposta: {resposta}
@@ -99,11 +98,10 @@ class ChatbotSeguros:
             {{
                 "texto_no_tema": true/false,
                 "texto_preciso": true/false,
-                "texto_estruturado": true/false,
                 "texto_no_mesmo_idioma": true/false,
                 "texto_no_escopo": true/false,
-                "score": 0-100,
-                "feedback": "Texto explicativo em português detalhando os pontos fortes e fracos da resposta."
+                "score": (número inteiro de 0 a 100 representando o quão alinhada a resposta está com os critérios apresentados anteriormente),
+                "feedback": "Texto explicativo em português detalhando os pontos fortes e fracos da resposta do chatbot."
             }}
             """
             
@@ -120,7 +118,7 @@ class ChatbotSeguros:
             try:
                 resultado = json.loads(avaliacao['message']['content'])
                 # Garantir que todas as chaves necessárias existem
-                required_keys = ['texto_no_tema', 'texto_preciso', 'texto_estruturado', 'texto_no_mesmo_idioma', 'texto_no_escopo', 'score', 'feedback']
+                required_keys = ['texto_no_tema', 'texto_preciso', 'texto_no_mesmo_idioma', 'texto_no_escopo', 'score', 'feedback']
                 for key in required_keys:
                     if key not in resultado:
                         raise KeyError(f"Chave '{key}' ausente na avaliação")
@@ -135,7 +133,6 @@ class ChatbotSeguros:
             return {
                 "texto_no_tema": True,
                 "texto_preciso": True,
-                "texto_estruturado": True,
                 "texto_no_mesmo_idioma": True,
                 "texto_no_escopo": True,
                 'score': 50,
@@ -174,9 +171,8 @@ class ChatbotSeguros:
         3. Perguntas semelhantes respondidas anteriormente:
         {conversas_similares}
 
-        Responda à seguinte pergunta com base nas informações fornecidas, seguindo as diretrizes estabelecidas. Não inicie sua resposta com "Pergunta:", "Resposta:", "**Resposta**" ou "**Pergunta**".  
-
-        Pergunta: {query}
+        Responda à seguinte pergunta com base nas informações fornecidas, seguindo as diretrizes estabelecidas anteriormente: 
+        {query}
         """
         
         # Gerar resposta

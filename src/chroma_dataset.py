@@ -48,7 +48,7 @@ class ChromaDataset:
             ids=[f"question_{timestamp}_{session_id}"]
         )
         
-    def buscar_conversas_similares(self, query, top_k=5):
+    def buscar_conversas_similares(self, query, top_k=3):
         """Busca conversas similares baseadas na query"""
         modelo_embedding = SentenceTransformer('all-MiniLM-L6-v2')
         query_embedding = modelo_embedding.encode(query).tolist()
@@ -115,7 +115,6 @@ class ChromaDataset:
         Timestamp: {timestamp}
         Pergunta: {query}
         Resposta: {resposta}
-        Tema da pergunta: {tema}
         """
         
         # Gerar embedding
@@ -135,7 +134,6 @@ class ChromaDataset:
                 'avaliacao_score': avaliacao['score'],
                 "texto_no_tema": avaliacao['texto_no_tema'],
                 "texto_preciso": avaliacao['texto_preciso'],
-                "texto_estruturado": avaliacao['texto_estruturado'],
                 "texto_no_mesmo_idioma": avaliacao['texto_no_mesmo_idioma'],
                 "texto_no_escopo": avaliacao['texto_no_escopo'],
                 'feedback': avaliacao['feedback']
@@ -169,7 +167,6 @@ class ChromaDataset:
                         'avaliacao_score': metadata['avaliacao_score'],
                         "texto_no_tema": metadata['texto_no_tema'],
                         "texto_preciso": metadata['texto_preciso'],
-                        "texto_estruturado": metadata['texto_estruturado'],
                         "texto_no_mesmo_idioma": metadata['texto_no_mesmo_idioma'],
                         "texto_no_escopo": metadata['texto_no_escopo'],
                         'feedback': metadata['feedback']
