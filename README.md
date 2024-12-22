@@ -50,7 +50,7 @@ O sistema é composto por três chatbots, cada um com função específica:
 Estas categorias são usadas tanto para geração de perguntas quanto para classificação das mesmas na classe `ChatbotSeguros`.
 
 ### Diagrama de Funcionamento
-![Diagrama Chatbot](https://github.com/user-attachments/assets/e0aad4a4-f4c7-49d7-9b97-fbb7bd7de737)
+![Diagrama Chatbot](https://github.com/user-attachments/assets/004eaed1-f0db-4c27-82f6-838dae992f75)
 
 ### Avaliando o Chatbot
 O script `chatbot_test.py` simula conversas e gera relatórios de desempenho. Para executar:
