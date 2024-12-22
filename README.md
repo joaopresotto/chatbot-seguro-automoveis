@@ -23,6 +23,7 @@ Para instalar e executar o projeto localmente:
 - `src/chroma_dataset.py`: Contém a classe `ChromaDataset` responsável por gerenciar o banco de dados vetorial e processar PDFs.
 - `src/chatbot_seguros.py`: Contém a classe `ChatbotSeguros` que implementa a lógica do chatbot.
 - `chatbot_test.py`: Script para testar o chatbot e gerar relatórios de desempenho.
+- `app.py`: Script para gerar interface gráfica para interagir com o chatbot.
 
 ## Informações sobre o Projeto
 O sistema é composto por três chatbots, cada um com função específica:

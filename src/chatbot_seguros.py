@@ -139,7 +139,7 @@ class ChatbotSeguros:
                 'feedback': 'Avaliação padrão devido a erro no processo.'
             }
 
-    def gerar_resposta(self, query, session_id):
+    def gerar_resposta(self, query, session_id='default'):
         """
         Gera uma resposta para a query do usuário, registrando todo o processo.
         """
