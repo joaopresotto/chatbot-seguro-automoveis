@@ -76,15 +76,9 @@ O [relatório gerado](https://github.com/joaopresotto/chatbot-seguro-automoveis/
 Exemplos de métricas geradas:
 ```json
 "duvidas_frequentes": [
-    [
-      "Existem limites para uso de assistência?",2
-    ],
-    [
-      "Preciso fazer vistoria para renovar o seguro?",2
-    ],
-    [
-      "O seguro me indenizará se estiver com documento do carro irregular e IPVA atrasado?",2
-    ],
+    ["Existem limites para uso de assistência?",2],
+    ["Preciso fazer vistoria para renovar o seguro?",2],
+    ["O seguro me indenizará se estiver com documento do carro irregular e IPVA atrasado?",2],
     ...
 ]
 ```
