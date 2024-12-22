@@ -126,7 +126,9 @@ streamlit run app.py
 ```
 
 ## Pontos de Melhoria
+- Fazer com que o chatbot responda melhor perguntas fora do escopo de seguros, perguntas como "?" pode gerar respostas incorretas.
 - Extrair chunks dos PDFs ao passar um modelo mais robusto, capaz de identificar parágrafos por exemplo.
     - Abordagem atual em `process_pdfs` extrai o texto da página como um todo e usa esse texto completo na parte de embedding
 - Aprimorar deteção de temas, expandindo classes, possivelmente implementando um classificador e não comparação de palavras-chave.
 - Aprimorar modelo oráculo, que muitas vezes avalia mal os problemas e dá *feedbacks* imprecisos.
+- Mostrar histórico de mensagens no `app.py`.

@@ -24,6 +24,12 @@ class ChatbotSeguros:
             
         # Instanciar dataset
         self.dataset_class = ChromaDataset(database_path=database_path, pdfs_path=pdfs_path)
+        
+        # Messages
+        self.messages_chatbot = [
+            # Mensagem inicial do sistema
+            {'role': 'system', 'content': self.chatbot_content}
+        ]
 
     def classificar_tema(self, query):
         """
@@ -80,8 +86,12 @@ class ChatbotSeguros:
         try:
             # Prompt para avaliação
             eval_prompt = f"""
+            BASE DE CONHECIMENTO:
+            Contexto: {contexto}
+            Pergunta: {query}
+            Resposta: {resposta}
+            
             Avalie a qualidade da resposta fornecida pelo chatbot com base nos seguintes critérios:
-
             1. **Texto alinhado ao tema**: A resposta está diretamente relacionada à pergunta ou tema abordado? Verifique se o chatbot mantém o foco nas questões sobre *seguros de automóveis* das seguradoras Santander, Bradesco, Porto Seguro e Suhai, evitando desviar para outros tópicos.
             2. **Texto preciso**: A resposta é correta, clara e relevante? Identifique se há erros factuais, informações confusas ou ambiguidades que possam comprometer a utilidade da resposta.
             3. **Texto no mesmo idioma**: O chatbot deve sempre responder em português brasileiro (pt-br). Qualquer resposta total ou parcial em outro idioma (como inglês ou espanhol) será considerada um erro. Para este critério, avalie com atenção:
@@ -89,10 +99,6 @@ class ChatbotSeguros:
             - Se há misturas entre português e outro idioma (mesmo em partes pequenas).
             - Se a linguagem utilizada segue os padrões de português brasileiro, considerando possíveis regionalismos ou influências externas.
             4. **Texto no escopo**: O chatbot não deve fornecer respostas fora de sua área de especialidade. Avalie se ele evita responder perguntas relacionadas a seguros de saúde ou outros produtos financeiros que não sejam seguros de automóveis.
-
-            Pergunta: {query}
-            Resposta: {resposta}
-            Contexto: {contexto}
 
             Retorne apenas um JSON com o seguinte formato exato:
             {{
@@ -155,36 +161,47 @@ class ChatbotSeguros:
         # Buscar conversas similares anteriores
         conversas_similares = self.dataset_class.buscar_conversas_similares(query)
         
-        # Incluir histórico recente da sessão
-        historico_recente = self.dataset_class.get_recent_history(session_id)
-        
         prompt = f"""
-        Você é um assistente especializado em seguros das seguradoras Santander, Bradesco, Porto Seguro e Suhai. Sua função é responder às perguntas dos usuários com base em informações fornecidas, mantendo precisão, profissionalismo e um tom acolhedor. 
+        Você é um assistente especializado EXCLUSIVAMENTE em seguros de automóveis (AUTO) das seguradoras Santander, Bradesco, Porto Seguro e Suhai.
 
-        As informações a seguir são organizadas para ajudar na formulação de sua resposta:
-        1. Histórico recente da conversa:
-        {historico_recente}
+        REGRAS ABSOLUTAS:
+        1. RESPONDA APENAS O QUE FOI PERGUNTADO
+        2. NÃO FAÇA suposições ou deduções
+        3. NÃO MENCIONE "contexto", "documentos" ou "informações fornecidas"
+        4. NÃO USE frases introdutórias como "vou responder", "a seguir", etc
+        5. NÃO FAÇA perguntas adicionais não solicitadas
+        6. NÃO CITE informações técnicas sem uma pergunta específica
 
-        2. Contexto dos documentos relevantes:
-        {contexto_pdfs}
+        TIPOS DE INTERAÇÃO:
+        1. SAUDAÇÕES/MENSAGENS SIMPLES (oi, olá, bom dia, tudo bem, etc):
+        RESPONDA APENAS: "Olá! Sou um assistente especializado em seguros auto da Santander, Bradesco, Porto Seguro e Suhai. Como posso ajudar?"
+        2. PERGUNTAS FORA DO ESCOPO (não relacionadas a seguros auto das 4 seguradoras):
+        RESPONDA APENAS: "Desculpe, só posso responder sobre seguros de automóveis das seguradoras Santander, Bradesco, Porto Seguro e Suhai."
+        3. PERGUNTAS ESPECÍFICAS SOBRE SEGUROS AUTO:
+        - Responda EXATAMENTE o que foi perguntado
+        - Use APENAS informações relevantes à pergunta
+        - Se não houver informação específica, RESPONDA APENAS: "Não tenho essa informação específica. Recomendo contatar diretamente a seguradora."
 
-        3. Perguntas semelhantes respondidas anteriormente:
-        {conversas_similares}
-
+        DADOS PARA USO RESTRITO (usar SOMENTE para perguntas específicas sobre seguros auto):
+        Contexto relacionado com a pergunta: {contexto_pdfs}
+        Histórico de mensagens similares: {conversas_similares}
+         
         Responda à seguinte pergunta com base nas informações fornecidas, seguindo as diretrizes estabelecidas anteriormente: 
-        {query}
+        Pergunta: {query}
         """
+        
+        # Adiciona pergunta do usuário
+        self.messages_chatbot.append({'role': 'user', 'content': prompt})
         
         # Gerar resposta
         resposta = ollama.chat(
             model=self.model_chatbot,
-            messages=[
-                {'role': 'system', 'content': self.chatbot_content},
-                {'role': 'user', 'content': prompt}
-            ]
+            messages=self.messages_chatbot,
         )
-        
         resposta_content = resposta['message']['content']
+        
+        # Adiciona resposta do chatbot ao histórico
+        self.messages_chatbot.append({'role': 'assistant', 'content': resposta_content})
         
         # Fix pois por conta do historico de conversas, a resposta pode começar com "Pergunta:" ou "Resposta:" por ser um modelo mais "simples"
         if resposta_content.strip().startswith("Pergunta:"):

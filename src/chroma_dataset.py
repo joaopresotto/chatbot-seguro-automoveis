@@ -60,7 +60,7 @@ class ChromaDataset:
         
         return "\n".join(results['documents'][0])
     
-    def get_recent_history(self, session_id, limit=5):
+    def get_recent_history(self, session_id, limit=3):
         """Get recent conversation history from ChromaDB"""
         # Pegamos todos os documentos da sessão
         results = self.history_collection.get(

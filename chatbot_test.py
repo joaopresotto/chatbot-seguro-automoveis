@@ -110,28 +110,34 @@ class ChatbotTester:
         Gera variação da pergunta com 60% de chance, caso contrário usa a pergunta original.
         """
 
-        # PAra garantir que não vai ter muita aleatoriedade no começo, pois o "usuario" pode alucinar um pouco
+        # Para garantir que não vai ter muita aleatoriedade no começo, pois o "usuario" pode alucinar um pouco
         if self.controle_aleatoriedade < 5:
             self.controle_aleatoriedade += 1
             return pergunta_base
         
         # 60% de chance de variar a pergunta
         if random.random() < 0.6:
-            prompt = f"""
-            Você é um cliente interessado em seguro de carro. 
-            Reescreva a seguinte pergunta de uma maneira diferente, mantendo o mesmo significado 
-            mas usando outras palavras, como se fosse uma pessoa real perguntando naturalmente:
+            
+            if random.random() < 0.05: # gerar em casos muito específicos perguntas randomicas
+                prompt = f"""
+                Vocé é um cliente interessado em seguro de automóveis. Pergunte alguma coisa aleatória.
+                """
+            else:
+                prompt = f"""
+                Você é um cliente interessado em seguro de automóveis. 
+                Reescreva a seguinte pergunta de uma maneira diferente, mantendo o mesmo significado 
+                mas usando outras palavras, como se fosse uma pessoa real perguntando naturalmente:
 
-            Pergunta original: {pergunta_base}
+                Pergunta original: {pergunta_base}
 
-            Lembre-se:
-            - Mantenha informal e natural
-            - Pode adicionar contexto pessoal
-            - Mantenha o foco na mesma dúvida
-            - Use linguagem do dia a dia
-            - Responda APENAS a nova pergunta, sem explicações
+                Lembre-se:
+                - Mantenha informal e natural
+                - Pode adicionar contexto pessoal
+                - Mantenha o foco na mesma dúvida
+                - Use linguagem do dia a dia
+                - Responda APENAS a nova pergunta, sem explicações
 
-            Nova pergunta:"""
+                Nova pergunta:"""
 
             try:
                 resposta = ollama.chat(
@@ -151,7 +157,7 @@ class ChatbotTester:
     def gerar_pergunta_followup(self, categoria, contexto_anterior):
         """Gera uma pergunta de follow-up baseada no contexto"""
         prompt = f"""
-        Você é um cliente conversando sobre seguro de carro.
+        Você é um cliente conversando sobre seguro de automóveis.
         Com base no contexto da conversa anterior, gere uma pergunta de follow-up natural.
 
         Contexto anterior: {contexto_anterior}
@@ -211,10 +217,14 @@ class ChatbotTester:
             
         return historico
 
-    def executar_testes(self, chatbot, num_conversas=3):
+    def executar_testes(self, num_conversas=3):
             """Same as original but stores metrics in a more structured way"""
             print('Total de conversas que vão ser geradas:', num_conversas)
             for i in range(num_conversas):
+                
+                # instanciar chatbot para cada conversa
+                chatbot = ChatbotSeguros()
+                
                 n_interacoes = np.random.randint(1, 10)   
                 print(f'\tGerando conversa de número {i+1} com {n_interacoes} interações)...')
                 conversa = self.gerar_conversa(chatbot, n_interacoes)
@@ -245,8 +255,7 @@ class ChatbotTester:
             json.dump(self.resultados_teste, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    chatbot = ChatbotSeguros()
     tester = ChatbotTester()
     
-    resultados = tester.executar_testes(chatbot, num_conversas=30)
+    resultados = tester.executar_testes(num_conversas=30)
     tester.salvar_relatorio()

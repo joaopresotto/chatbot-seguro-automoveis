@@ -4,7 +4,7 @@ import torch
 import streamlit as st
 from src.chatbot_seguros import ChatbotSeguros
 
-st.title("Chatbot Seguros")
+st.title("Chatbot Seguros - Santander, Bradesco, Porto Seguro e Suhai")
 
 # initialize history
 if "messages" not in st.session_state:
@@ -14,12 +14,12 @@ if "messages" not in st.session_state:
 chatbot = ChatbotSeguros()
 session_id = str(uuid.uuid4())
 
-# Display chat messages from history on app rerun
-for message in st.session_state["messages"]:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+#Display chat messages from history on app rerun
+# for message in st.session_state["messages"]:
+#     with st.chat_message(message["role"]):
+#         st.markdown(message["content"])
 
-if prompt := st.chat_input("Enter prompt here.."):
+if prompt := st.chat_input("Insira sua mensagem.."):
     # add latest message to history in format {role, content}
     st.session_state["messages"].append({"role": "user", "content": prompt})
 
