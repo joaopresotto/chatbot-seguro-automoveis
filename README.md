@@ -124,6 +124,7 @@ Para iniciar o chatbot, execute o comando:
 ```bash
 streamlit run app.py
 ```
+![image](https://github.com/user-attachments/assets/094f70a9-eeba-4d14-853d-4010a35a1645)
 
 ## Pontos de Melhoria
 - Extrair chunks dos PDFs ao passar um modelo mais robusto, capaz de identificar parágrafos por exemplo.
