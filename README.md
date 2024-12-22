@@ -42,7 +42,8 @@ O sistema é composto por três chatbots, cada um com função específica:
    - `Texto preciso`: Clareza e ausência de ambiguidade
    - `Texto no mesmo idioma`: Consistência no português
    - `Texto no escopo`: Aderência à especialidade
-   O oráculo gera um score (0-100) e feedback para cada resposta.
+   
+   Além disso, o oráculo gera um score (0-100) e feedback para cada resposta.
 
 3. **Usuário Simulado**: Gera perguntas pré-definidas e follow-ups para testes.
 

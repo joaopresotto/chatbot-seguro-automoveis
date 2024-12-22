@@ -157,7 +157,7 @@ class ChromaDataset:
             scores.append(metadata['avaliacao_score'])
             temas[metadata['tema']] += 1 # acrescentar tema
             # Registrar problemas se score baixo
-            if metadata['avaliacao_score'] <= 70:
+            if metadata['avaliacao_score'] < 70:
                 problemas.append({
                     'pergunta': metadata['query'],
                     'resposta': metadata['resposta'],
