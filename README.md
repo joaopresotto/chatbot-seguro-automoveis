@@ -121,7 +121,9 @@ Exemplos de métricas geradas:
 
 ### Interface Gráfica
 Para iniciar o chatbot, execute o comando:
-<todo>
+```bash
+streamlit run app.py
+```
 
 ## Pontos de Melhoria
 - Extrair chunks dos PDFs ao passar um modelo mais robusto, capaz de identificar parágrafos por exemplo.
