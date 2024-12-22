@@ -117,7 +117,7 @@ Algumas métricas geradas (número é a quantidade de vezes que a dúvida/tema a
         "feedback": "A resposta do chatbot está principalmente alinhada com os critérios apresentados (está no tópico, no mesmo idioma e no escopo). Porém, o texto é pouco preciso e falta um pouco de detalhamento. É possível explicitar mais sobre os pontos fortes e fracos da resposta para ajudar a melhorar a qualidade do serviço."
       }
     },
-...
+    ...
 ]
 ```
 **Observação:** O avaliador oráculo, sendo também um chatbot, pode apresentar inconsistências em suas avaliações.
