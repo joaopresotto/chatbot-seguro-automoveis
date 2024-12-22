@@ -74,7 +74,7 @@ O repositório possui um [relatório](https://github.com/joaopresotto/chatbot-se
    - Avaliação do oráculo (scores e feedbacks)
    - Distribuição de temas e dúvidas frequentes
 
-Algumas métricas geradas (número é a quantidade de vezes que a dúvida apareceu):
+Algumas métricas geradas (número é a quantidade de vezes que a dúvida/tema apareceu):
 ```json
 "duvidas_frequentes": [
     ["Existem limites para uso de assistência?",2],
