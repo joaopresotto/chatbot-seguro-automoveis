@@ -55,7 +55,7 @@ O sistema é composto por três chatbots, cada um com função específica:
 - `casos_especificos`: Uso comercial, viagens, modificações
 - `contratacao_renovacao`: Contratação e renovação de apólices
 
-Estas categorias são usadas tanto para geração de perguntas quanto para classificação das mesmas na classe `ChatbotSeguros`.
+Estas categorias são usadas tanto para geração de perguntas quanto para classificação das mesmas na classe `ChatbotSeguros` ao usar a função [`classificar_tema`](https://github.com/joaopresotto/chatbot-seguro-automoveis/blob/b3ef60614715e284347e8fa04af9204c1054f7e2/src/chatbot_seguros.py#L34).
 
 ### Diagrama de Funcionamento
 ![Diagrama Chatbot](https://github.com/user-attachments/assets/004eaed1-f0db-4c27-82f6-838dae992f75)
