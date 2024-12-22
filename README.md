@@ -25,6 +25,13 @@ Para instalar e executar o projeto localmente:
 - `chatbot_test.py`: Script para testar o chatbot e gerar relatórios de desempenho.
 - `app.py`: Script para gerar interface gráfica para interagir com o chatbot.
 
+## Usando o Chatbot
+Para iniciar o chatbot, execute o comando:
+```bash
+streamlit run app.py
+```
+![image](https://github.com/user-attachments/assets/094f70a9-eeba-4d14-853d-4010a35a1645)
+
 ## Informações sobre o Projeto
 O sistema é composto por três chatbots, cada um com função específica:
 
@@ -118,13 +125,6 @@ Exemplos de métricas geradas:
 ]
 ```
 **Observação:** O avaliador oráculo, sendo também um chatbot, pode apresentar inconsistências em suas avaliações.
-
-### Interface Gráfica
-Para iniciar o chatbot, execute o comando:
-```bash
-streamlit run app.py
-```
-![image](https://github.com/user-attachments/assets/094f70a9-eeba-4d14-853d-4010a35a1645)
 
 ## Pontos de Melhoria
 - Fazer com que o chatbot responda melhor perguntas fora do escopo de seguros, perguntas como "?" pode gerar respostas incorretas.
