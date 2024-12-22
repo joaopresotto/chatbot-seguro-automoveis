@@ -124,6 +124,7 @@ Algumas métricas geradas (número é a quantidade de vezes que a dúvida/tema a
 
 ## Pontos de Melhoria
 - Fazer com que o chatbot responda melhor perguntas fora do escopo de seguros, perguntas como "?" pode gerar respostas incorretas.
+- Passar a filtrar as buscas no *dataset* via um *threshold* de distância entre os _embeddings_, para evitar que documentos ou informações irrelevantes a pergunta sejam transmitidas ao contexto do chatbot.
 - Extrair chunks dos PDFs ao passar um modelo mais robusto, capaz de identificar parágrafos por exemplo.
     - Abordagem atual em `process_pdfs` extrai o texto da página como um todo e usa esse texto completo na parte de embedding
 - Aprimorar deteção de temas, expandindo classes, possivelmente implementando um classificador e não comparação de palavras-chave.
