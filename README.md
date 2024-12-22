@@ -73,12 +73,13 @@ O [relatório gerado](https://github.com/joaopresotto/chatbot-seguro-automoveis/
    - Avaliação do oráculo (scores e feedbacks)
    - Distribuição de temas e dúvidas frequentes
 
-Exemplos de métricas geradas:
+Exemplos de métricas geradas (número é a quantidade de vezes que a dúvida apareceu):
 ```json
 "duvidas_frequentes": [
     ["Existem limites para uso de assistência?",2],
     ["Preciso fazer vistoria para renovar o seguro?",2],
-    ["O seguro me indenizará se estiver com documento do carro irregular e IPVA atrasado?",2],
+    ["O seguro me indenizará se estiver com documento do carro irregular e IPVA atrasado?",1],
+    ["Se eu contratar o carro reserva, tenho direito a utilizá-lo?", 3],
     ...
 ]
 ```
