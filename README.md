@@ -66,7 +66,7 @@ O script `chatbot_test.py` simula conversas e gera relatórios de desempenho. Pa
 python chatbot_test.py
 ```
 
-O [relatório gerado](https://github.com/joaopresotto/chatbot-seguro-automoveis/blob/main/resultados/resultados_teste_20241221_160629.json) contém:
+O repositório possui um [relatório](https://github.com/joaopresotto/chatbot-seguro-automoveis/blob/main/resultados/resultados_teste_20241221_160629.json) gerado. A seguir vão ser apresentadas as informações disponíveis no mesmo:
 
 1. `conversas`: Histórico completo dos testes
 2. `metricas`: 
@@ -74,7 +74,7 @@ O [relatório gerado](https://github.com/joaopresotto/chatbot-seguro-automoveis/
    - Avaliação do oráculo (scores e feedbacks)
    - Distribuição de temas e dúvidas frequentes
 
-Exemplos de métricas geradas (número é a quantidade de vezes que a dúvida apareceu):
+Algumas métricas geradas (número é a quantidade de vezes que a dúvida apareceu):
 ```json
 "duvidas_frequentes": [
     ["Existem limites para uso de assistência?",2],
